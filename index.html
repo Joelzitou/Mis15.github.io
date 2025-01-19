@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book de Fotos - Quinceañera</title>
+    <!-- Enlace al archivo externo de CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Reproductor de música en segundo plano -->
+    <audio id="background-music" loop>
+        <source src="music.mp3" type="audio/mp3">
+        Tu navegador no soporta el formato de audio.
+    </audio>
+
+    <header>
+        <h1>Book de Fotos - Quinceañera</h1>
+    </header>
+    
+    <div class="bienvenida">
+        <p>Bienvenidos al book de fotos de Julia, un día inolvidable.</p>
+    </div>
+
+    <div class="galeria">
+        <!-- Aquí están las fotos de la quinceañera (cambia los nombres de las imágenes según corresponda) -->
+        <div class="foto" onclick="openModal('Images/SAM_0001.jpg')"><img src="Images/SAM_0001.jpg" alt="Foto 1"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0002.jpg')"><img src="Images/SAM_0002.jpg" alt="Foto 2"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0003.jpg')"><img src="Images/SAM_0003.jpg" alt="Foto 3"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0004.jpg')"><img src="Images/SAM_0004.jpg" alt="Foto 4"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0005.jpg')"><img src="Images/SAM_0005.jpg" alt="Foto 5"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0006.jpg')"><img src="Images/SAM_0006.jpg" alt="Foto 6"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0007.jpg')"><img src="Images/SAM_0007.jpg" alt="Foto 7"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0008.jpg')"><img src="Images/SAM_0008.jpg" alt="Foto 8"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0009.jpg')"><img src="Images/SAM_0009.jpg" alt="Foto 9"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0010.jpg')"><img src="Images/SAM_0010.jpg" alt="Foto 10"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0011.jpg')"><img src="Images/SAM_0011.JPG" alt="Foto 11"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0025.jpg')"><img src="Images/SAM_0025.JPG" alt="Foto 25"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0012.jpg')"><img src="Images/SAM_0012.JPG" alt="Foto 12"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0013.jpg')"><img src="Images/SAM_0013.JPG" alt="Foto 13"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0014.jpg')"><img src="Images/SAM_0014.JPG" alt="Foto 14"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0015.jpg')"><img src="Images/SAM_0015.JPG" alt="Foto 15"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0016.jpg')"><img src="Images/SAM_0016.JPG" alt="Foto 16"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0017.jpg')"><img src="Images/SAM_0017.JPG" alt="Foto 17"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0018.jpg')"><img src="Images/SAM_0018.JPG" alt="Foto 18"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0019.jpg')"><img src="Images/SAM_0019.JPG" alt="Foto 19"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0020.jpg')"><img src="Images/SAM_0020.JPG" alt="Foto 20"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0021.jpg')"><img src="Images/SAM_0021.JPG" alt="Foto 21"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0022.jpg')"><img src="Images/SAM_0022.JPG" alt="Foto 22"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0023.jpg')"><img src="Images/SAM_0023.JPG" alt="Foto 23"></div>
+        <div class="foto" onclick="openModal('Images/SAM_0024.jpg')"><img src="Images/SAM_0024.JPG" alt="Foto 24"></div>
+        <!-- Añade el resto de las fotos hasta SAM_0025 -->
+    </div>
+
+    <footer>
+        <p>Evento realizado el 13 de Septiembre. ¡Gracias por ser parte de este día tan especial!</p>
+    </footer>
+    <!--MODAL-->
+    <div id="modal" class="modal" onclick="closeModal(event)">
+        <!-- Botón de cerrar -->
+        <span class="close" onclick="closeModal(event)">&times;</span>
+        <!-- Imagen que se amplía -->
+        <img id="modalImg" src="" alt="Imagen ampliada">
+        <!-- Botones de zoom -->
+        <button class="zoom-btn zoom-in" onclick="zoomIn()">+</button>
+        <button class="zoom-btn zoom-out" onclick="zoomOut()">-</button>
+        <!-- Flechas para navegar entre las imágenes -->
+        <span class="prev" onclick="changeImage(-1); event.stopPropagation()">&#10094;</span>
+        <span class="next" onclick="changeImage(1); event.stopPropagation()">&#10095;</span>
+    </div>
+    <script>
+        window.addEventListener('load', function() {
+            var audio = document.getElementById('background-music');
+            audio.play();
+        });
+    </script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
