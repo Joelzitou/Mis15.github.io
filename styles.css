@@ -90,6 +90,7 @@ footer p {
     max-height: 80%;
     margin: auto;
     animation: zoomIn 0.5s ease-out; /* Animación para el zoom */
+    object-fit: contain; /* Esto asegura que la imagen se mantenga centrada y con la proporción correcta */
 }
 
 /* Botón de cierre (X) */
@@ -142,8 +143,6 @@ footer p {
     background-color: rgba(0, 0, 0, 0.3);
     border-radius: 50%;
 }
-
-/*ZOOM
 
 /* Estilo para los botones de zoom */
 .zoom-btn {
