@@ -3,15 +3,15 @@ var clickCount = 0; // Contador de clics
 
 // Array de imágenes
 var images = [
-    'Images/SAM_0001.jpg', 'Images/SAM_0002.jpg', 'Images/SAM_0003.jpg', 
-    'Images/SAM_0004.jpg', 'Images/SAM_0005.jpg', 'Images/SAM_0006.jpg', 
-    'Images/SAM_0007.jpg', 'Images/SAM_0008.jpg', 'Images/SAM_0009.jpg', 
-    'Images/SAM_0010.jpg', 'Images/SAM_0011.jpg', 'Images/SAM_0012.jpg', 
-    'Images/SAM_0013.jpg', 'Images/SAM_0014.jpg', 'Images/SAM_0015.jpg', 
-    'Images/SAM_0016.jpg', 'Images/SAM_0017.jpg', 'Images/SAM_0018.jpg', 
-    'Images/SAM_0019.jpg', 'Images/SAM_0020.jpg', 'Images/SAM_0021.jpg', 
-    'Images/SAM_0022.jpg', 'Images/SAM_0023.jpg', 'Images/SAM_0024.jpg', 
-    'Images/SAM_0025.jpg'
+    'Images/SAM_0001.JPG', 'Images/SAM_0002.jpg', 'Images/SAM_0003.JPG', 
+    'Images/SAM_0004.JPG', 'Images/SAM_0005.jpg', 'Images/SAM_0006.JPG', 
+    'Images/SAM_0007.JPG', 'Images/SAM_0008.JPG', 'Images/SAM_0009.JPG', 
+    'Images/SAM_0010.JPG', 'Images/SAM_0011.JPG', 'Images/SAM_0012.JPG', 
+    'Images/SAM_0013.JPG', 'Images/SAM_0014.JPG', 'Images/SAM_0015.JPG', 
+    'Images/SAM_0016.JPG', 'Images/SAM_0017.JPG', 'Images/SAM_0018.JPG', 
+    'Images/SAM_0019.JPG', 'Images/SAM_0020.JPG', 'Images/SAM_0021.JPG', 
+    'Images/SAM_0022.JPG', 'Images/SAM_0023.JPG', 'Images/SAM_0024.JPG', 
+    'Images/SAM_0025.JPG'
 ];
 
 // Función para abrir el modal y mostrar la imagen ampliada
