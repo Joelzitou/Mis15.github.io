@@ -1,6 +1,7 @@
 var currentImageIndex = 0; // Índice de la imagen actual
+var clickCount = 0; // Contador de clics
 
-// Array de imágenes para una futura actualización (hasta el nro 100)
+// Array de imágenes
 var images = [
     'Images/SAM_0001.jpg', 'Images/SAM_0002.jpg', 'Images/SAM_0003.jpg', 
     'Images/SAM_0004.jpg', 'Images/SAM_0005.jpg', 'Images/SAM_0006.jpg', 
@@ -25,6 +26,15 @@ function openModal(imageSrc) {
     // Resetea el zoom al abrir una nueva imagen
     modalImg.style.transform = 'scale(1)'; // Resetea la escala al abrir la imagen
     modalImg.style.transition = 'transform 0.2s'; // Añadir una transición suave
+
+    // Reproducir música después de un primer o segundo clic en la imagen
+    clickCount++;
+
+    if (clickCount === 2) {  // Reproducir la música solo después del segundo clic
+        var music = document.getElementById("background-music");
+        music.play();  // Reproduce la música
+        music.volume = 0.5;  // Ajusta el volumen (0.0 a 1.0)
+    }
 
     // Añadir el event listener para el zoom con la rueda del ratón
     modalImg.addEventListener('wheel', function(event) {
@@ -71,8 +81,6 @@ function changeImage(direction) {
     modalImg.src = images[currentImageIndex];
 }
 
-//ZOOM
-
 // Función para hacer zoom en la imagen (acercar)
 function zoomIn() {
     var modalImg = document.getElementById("modalImg");
@@ -105,4 +113,3 @@ window.onload = function() {
         music.volume = 0.5;  // Ajusta el volumen (0.0 a 1.0)
     }, 1000);  // Retraso de 1 segundo
 };
-
