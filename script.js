@@ -3,8 +3,8 @@ var clickCount = 0; // Contador de clics
 
 // Array de imágenes
 var images = [
-    'Images/SAM_0001.JPG', 'Images/SAM_0002.jpg', 'Images/SAM_0003.JPG', 
-    'Images/SAM_0004.JPG', 'Images/SAM_0005.jpg', 'Images/SAM_0006.JPG', 
+    'Images/SAM_0001.JPG', 'Images/SAM_0002.JPG', 'Images/SAM_0003.JPG', 
+    'Images/SAM_0004.JPG', 'Images/SAM_0005.JPG', 'Images/SAM_0006.JPG', 
     'Images/SAM_0007.JPG', 'Images/SAM_0008.JPG', 'Images/SAM_0009.JPG', 
     'Images/SAM_0010.JPG', 'Images/SAM_0011.JPG', 'Images/SAM_0012.JPG', 
     'Images/SAM_0013.JPG', 'Images/SAM_0014.JPG', 'Images/SAM_0015.JPG', 
