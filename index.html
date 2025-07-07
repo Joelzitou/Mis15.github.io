@@ -150,6 +150,7 @@
             font-size: 1.2rem;
             display: none;
             text-align: center;
+            z-index: 10;
         }
         
         .lightbox-loading-spinner {
@@ -499,7 +500,6 @@
             <div class="lightbox-img-container">
                 <div class="lightbox-loading" id="lightbox-loading">
                     <div class="lightbox-loading-spinner"></div>
-                    <div>Cargando imagen...</div>
                 </div>
                 <img class="lightbox-img" id="lightbox-img" src="" alt="">
             </div>
@@ -775,18 +775,19 @@
             // Precargar imágenes adyacentes para navegación fluida
             imageCache.preloadAdjacentImages(index);
             
-            // Mostrar indicador de carga
-            lightboxLoading.style.display = 'block';
-            lightboxImg.style.display = 'none';
+            // Mostrar miniatura mientras se carga la imagen completa
+            lightboxImg.src = imageCache.getThumbnail(index).src;
+            lightboxImg.style.display = 'block';
             
-            // Cargar la imagen en tamaño completo
-            const img = new Image();
-            img.onload = function() {
-                lightboxImg.src = this.src;
-                lightboxImg.style.display = 'block';
-                lightboxLoading.style.display = 'none';
+            // Iniciar carga de imagen completa en segundo plano
+            const fullsizeImg = new Image();
+            fullsizeImg.onload = function() {
+                // Solo actualizar si sigue siendo la misma imagen
+                if (currentLightboxIndex === index) {
+                    lightboxImg.src = this.src;
+                }
             };
-            img.src = getImageUrls(index).fullsize;
+            fullsizeImg.src = getImageUrls(index).fullsize;
         }
         
         function closeLightbox() {
@@ -808,34 +809,33 @@
                 return; // No hay más imágenes en esa dirección
             }
             
+            // Actualizar el índice actual
+            currentLightboxIndex = newIndex;
+            
+            const lightboxImg = document.getElementById('lightbox-img');
+            
+            // Mostrar miniatura mientras se carga
+            lightboxImg.src = imageCache.getThumbnail(newIndex).src;
+            
+            // Precargar imágenes adyacentes
+            imageCache.preloadAdjacentImages(newIndex);
+            
+            // Iniciar carga de imagen completa en segundo plano
+            const fullsizeImg = new Image();
+            fullsizeImg.onload = function() {
+                // Solo actualizar si sigue siendo la misma imagen
+                if (currentLightboxIndex === newIndex) {
+                    lightboxImg.src = this.src;
+                }
+            };
+            fullsizeImg.src = getImageUrls(newIndex).fullsize;
+            
             // Actualizar la página si es necesario
             if (newPage !== currentPage) {
                 currentPage = newPage;
                 generateGallery(currentPage);
                 generatePagination();
             }
-            
-            // Actualizar el índice actual
-            currentLightboxIndex = newIndex;
-            
-            const lightboxImg = document.getElementById('lightbox-img');
-            const lightbox = document.getElementById('lightbox');
-            
-            // Mostrar indicador de carga
-            lightboxLoading.style.display = 'block';
-            lightboxImg.style.display = 'none';
-            
-            // Precargar imágenes adyacentes para navegación fluida
-            imageCache.preloadAdjacentImages(newIndex);
-            
-            // Cargar la nueva imagen
-            const img = new Image();
-            img.onload = function() {
-                lightboxImg.src = this.src;
-                lightboxImg.style.display = 'block';
-                lightboxLoading.style.display = 'none';
-            };
-            img.src = getImageUrls(newIndex).fullsize;
         }
         
         document.getElementById('prev').addEventListener('click', () => navigateLightbox('prev'));
