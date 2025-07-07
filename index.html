@@ -421,6 +421,7 @@
             .music-bubble {
                 bottom: 20px;
                 left: 20px;
+                z-index: 1000; /* Mayor prioridad */
             }
             
             .music-bubble.expanded {
@@ -535,13 +536,21 @@
         // Configuración inicial de música
         music.volume = 0.5;
         
-        // Control para expandir/contraer la burbuja en móvil
+        // Solución: Control de clics mejorado para móviles
         musicBubble.addEventListener('click', function(e) {
+            // Solo procesamos clics en móviles
             if (window.innerWidth <= 768) {
-                if (e.target === musicBubble || e.target === musicBubble.querySelector('.music-bubble-icon')) {
-                    musicBubble.classList.toggle('expanded');
-                }
+                // Prevenimos que el clic se propague a otros elementos
+                e.stopPropagation();
+                
+                // Alternamos el estado expandido
+                musicBubble.classList.toggle('expanded');
             }
+        });
+        
+        // Prevenimos que los clics dentro del contenido colapsen la burbuja
+        document.querySelector('.music-bubble-content').addEventListener('click', function(e) {
+            e.stopPropagation();
         });
         
         // Actualizar volumen cuando cambia el slider
@@ -550,7 +559,9 @@
         });
         
         // Control de reproducción/pausa
-        playPauseBtn.addEventListener('click', () => {
+        playPauseBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevenimos que el clic propague a la burbuja
+            
             if (music.paused) {
                 music.play();
                 playIcon.style.display = 'none';
