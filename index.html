@@ -258,6 +258,83 @@
             font-size: 0.8rem;
         }
         
+        /* Estilos para el reproductor de música */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 51, 102, 0.85);
+            border-radius: 30px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 99;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            max-width: 300px;
+        }
+        
+        .music-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .music-btn {
+            background: rgba(224, 247, 250, 0.3);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .music-btn:hover {
+            background: rgba(224, 247, 250, 0.6);
+            transform: scale(1.1);
+        }
+        
+        .song-info {
+            color: white;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+        
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .volume-slider {
+            width: 80px;
+            -webkit-appearance: none;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+        
         @media (max-width: 600px) {
             h1 { font-size: 2.2rem; }
             .header-subtitle { font-size: 1.5rem; }
@@ -266,6 +343,16 @@
                 width: 50px;
                 height: 50px;
                 font-size: 1.5rem;
+            }
+            .music-player {
+                bottom: 10px;
+                left: 10px;
+                padding: 8px 15px;
+                max-width: 250px;
+            }
+            .song-info {
+                font-size: 0.9rem;
+                max-width: 120px;
             }
         }
     </style>
@@ -296,6 +383,24 @@
             </div>
         </div>
     </div>
+    
+    <!-- Reproductor de música -->
+    <div class="music-player" id="music-player">
+        <div class="music-controls">
+            <button class="music-btn" id="play-pause-btn">▶️</button>
+        </div>
+        <div class="song-info" id="song-info">Bruno Mars - Count on Me</div>
+        <div class="volume-container">
+            <span class="music-btn">🔊</span>
+            <input type="range" min="0" max="1" step="0.01" value="0.5" class="volume-slider" id="volume-slider">
+        </div>
+    </div>
+    
+    <!-- Elemento de audio oculto -->
+    <audio id="background-music" loop>
+        <source src="Bruno Mars - Count on Me.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
 
     <script>
         // Configuración
@@ -304,6 +409,54 @@
         const totalPages = Math.ceil(totalPhotos / photosPerPage);
         let currentPage = 1;
         let currentLightboxIndex = 0;
+        
+        // Configuración del reproductor de música
+        const music = document.getElementById('background-music');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const volumeSlider = document.getElementById('volume-slider');
+        const songInfo = document.getElementById('song-info');
+        const musicPlayer = document.getElementById('music-player');
+        
+        // Configuración inicial de música
+        music.volume = 0.5;
+        
+        // Actualizar volumen cuando cambia el slider
+        volumeSlider.addEventListener('input', () => {
+            music.volume = volumeSlider.value;
+        });
+        
+        // Control de reproducción/pausa
+        playPauseBtn.addEventListener('click', () => {
+            if (music.paused) {
+                music.play();
+                playPauseBtn.innerHTML = "⏸️";
+            } else {
+                music.pause();
+                playPauseBtn.innerHTML = "▶️";
+            }
+        });
+        
+        // Iniciar música automáticamente (con interacción del usuario)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Reproducir música después de la primera interacción del usuario
+            const startMusic = () => {
+                music.play().then(() => {
+                    playPauseBtn.innerHTML = "⏸️";
+                }).catch(e => {
+                    // Mostrar mensaje si falla la reproducción automática
+                    songInfo.textContent = "Haz clic para reproducir";
+                    setTimeout(() => {
+                        songInfo.textContent = "Bruno Mars - Count on Me";
+                    }, 2000);
+                });
+            };
+            
+            // Escuchar el primer clic del usuario
+            document.body.addEventListener('click', () => {
+                startMusic();
+                document.body.removeEventListener('click', startMusic);
+            }, { once: true });
+        });
         
         function getImageUrls(index) {
             const photoNumber = index + 1;
