@@ -258,47 +258,50 @@
             font-size: 0.8rem;
         }
         
-        /* Estilos para el reproductor de música */
-        .music-player {
+        /* Estilos mejorados para el reproductor de música (versión burbuja) */
+        .music-bubble {
             position: fixed;
             bottom: 20px;
             left: 20px;
-            background: rgba(0, 51, 102, 0.85);
-            border-radius: 30px;
-            padding: 10px 20px;
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 51, 102, 0.9);
+            border-radius: 50%;
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 15px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
             z-index: 99;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(5px);
             transition: all 0.3s ease;
-            max-width: 300px;
+            overflow: hidden;
         }
         
-        .music-controls {
-            display: flex;
+        .music-bubble.expanded {
+            width: 280px;
+            height: auto;
+            min-height: 60px;
+            border-radius: 30px;
+            padding: 15px 20px;
+            justify-content: flex-start;
+        }
+        
+        .music-bubble-icon {
+            flex-shrink: 0;
+        }
+        
+        .music-bubble-content {
+            display: none;
+            flex-direction: column;
             gap: 10px;
+            width: 100%;
+            padding-left: 15px;
         }
         
-        .music-btn {
-            background: rgba(224, 247, 250, 0.3);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            color: white;
-            font-size: 1.2rem;
+        .music-bubble.expanded .music-bubble-content {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .music-btn:hover {
-            background: rgba(224, 247, 250, 0.6);
-            transform: scale(1.1);
         }
         
         .song-info {
@@ -308,17 +311,42 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 150px;
+        }
+        
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .music-btn {
+            background: rgba(224, 247, 250, 0.3);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .music-btn:hover {
+            background: rgba(224, 247, 250, 0.6);
         }
         
         .volume-container {
             display: flex;
             align-items: center;
             gap: 5px;
+            width: 100%;
         }
         
         .volume-slider {
-            width: 80px;
+            flex-grow: 1;
             -webkit-appearance: none;
             height: 5px;
             background: rgba(255, 255, 255, 0.3);
@@ -335,24 +363,74 @@
             cursor: pointer;
         }
         
-        @media (max-width: 600px) {
+        /* Ajustes para móvil */
+        @media (max-width: 768px) {
             h1 { font-size: 2.2rem; }
             .header-subtitle { font-size: 1.5rem; }
             .footer-message { font-size: 1.3rem; }
+            
+            /* Ajustes para botones de navegación en lightbox */
             .lightbox-btn {
                 width: 50px;
                 height: 50px;
                 font-size: 1.5rem;
+                position: fixed;
+                bottom: 20px;
             }
-            .music-player {
-                bottom: 10px;
-                left: 10px;
-                padding: 8px 15px;
-                max-width: 250px;
+            
+            .lightbox-btn.prev {
+                left: 20px;
             }
-            .song-info {
-                font-size: 0.9rem;
-                max-width: 120px;
+            
+            .lightbox-btn.next {
+                right: 20px;
+            }
+            
+            .lightbox-nav {
+                padding: 0;
+                justify-content: space-between;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto;
+                transform: none;
+                padding: 10px 20px;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(5px);
+            }
+            
+            /* Ajustes para la burbuja de música */
+            .music-bubble {
+                bottom: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .music-bubble.expanded {
+                width: 90%;
+                max-width: 300px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .pagination {
+                margin-bottom: 80px; /* Espacio para la burbuja de música */
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .music-bubble:hover {
+                width: 280px;
+                height: auto;
+                min-height: 60px;
+                border-radius: 30px;
+                padding: 15px 20px;
+                justify-content: flex-start;
+            }
+            
+            .music-bubble:hover .music-bubble-content {
+                display: flex;
             }
         }
     </style>
@@ -384,15 +462,18 @@
         </div>
     </div>
     
-    <!-- Reproductor de música -->
-    <div class="music-player" id="music-player">
-        <div class="music-controls">
-            <button class="music-btn" id="play-pause-btn">▶️</button>
-        </div>
-        <div class="song-info" id="song-info">Bruno Mars - Count on Me</div>
-        <div class="volume-container">
-            <span class="music-btn">🔊</span>
-            <input type="range" min="0" max="1" step="0.01" value="0.5" class="volume-slider" id="volume-slider">
+    <!-- Reproductor de música como burbuja -->
+    <div class="music-bubble" id="music-bubble">
+        <div class="music-bubble-icon">🎵</div>
+        <div class="music-bubble-content">
+            <div class="song-info" id="song-info">Bruno Mars - Count on Me</div>
+            <div class="music-controls">
+                <button class="music-btn" id="play-pause-btn">⏸️</button>
+                <div class="volume-container">
+                    <span class="music-btn">🔊</span>
+                    <input type="range" min="0" max="1" step="0.01" value="0.5" class="volume-slider" id="volume-slider">
+                </div>
+            </div>
         </div>
     </div>
     
@@ -415,10 +496,19 @@
         const playPauseBtn = document.getElementById('play-pause-btn');
         const volumeSlider = document.getElementById('volume-slider');
         const songInfo = document.getElementById('song-info');
-        const musicPlayer = document.getElementById('music-player');
+        const musicBubble = document.getElementById('music-bubble');
         
         // Configuración inicial de música
         music.volume = 0.5;
+        
+        // Control para expandir/contraer la burbuja en móvil
+        musicBubble.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) { // Solo para móviles
+                if (e.target === musicBubble || e.target === musicBubble.querySelector('.music-bubble-icon')) {
+                    musicBubble.classList.toggle('expanded');
+                }
+            }
+        });
         
         // Actualizar volumen cuando cambia el slider
         volumeSlider.addEventListener('input', () => {
@@ -444,7 +534,7 @@
                     playPauseBtn.innerHTML = "⏸️";
                 }).catch(e => {
                     // Mostrar mensaje si falla la reproducción automática
-                    songInfo.textContent = "Haz clic para reproducir";
+                    songInfo.textContent = "Toca para reproducir";
                     setTimeout(() => {
                         songInfo.textContent = "Bruno Mars - Count on Me";
                     }, 2000);
