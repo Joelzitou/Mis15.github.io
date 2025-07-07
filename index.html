@@ -540,10 +540,12 @@
         
         // Control para expandir/contraer la burbuja en móvil
         musicBubble.addEventListener('click', function(e) {
-            if (window.innerWidth <= 768) {
-                if (e.target === musicBubble || e.target === musicBubble.querySelector('.music-bubble-icon')) {
-                    musicBubble.classList.toggle('expanded');
-                }
+            // Solo para móviles y solo si no es un control interno
+            if (window.innerWidth <= 768 && 
+                !e.target.closest('.music-bubble-content') &&
+                !e.target.closest('.music-btn')) {
+                e.stopPropagation();
+                musicBubble.classList.toggle('expanded');
             }
         });
         
@@ -726,8 +728,8 @@
             lightbox.style.display = 'flex';
             document.body.style.overflow = 'hidden';
             
-            // Bajar la burbuja de música temporalmente
-            musicBubble.style.zIndex = "100";
+            // Contraer la burbuja de música si está expandida
+            musicBubble.classList.remove('expanded');
             
             setTimeout(() => {
                 lightboxImg.src = imageCache.getFullsize(index).src;
@@ -737,9 +739,6 @@
         function closeLightbox() {
             document.getElementById('lightbox').style.display = 'none';
             document.body.style.overflow = 'auto';
-            
-            // Restaurar z-index de la burbuja
-            musicBubble.style.zIndex = "1500";
         }
         
         function navigateLightbox(direction) {
