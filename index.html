@@ -109,7 +109,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.98);
-            z-index: 1000;
+            z-index: 2000; /* Mayor z-index para el lightbox */
             justify-content: center;
             align-items: center;
             animation: fadeIn 0.25s ease-out;
@@ -161,7 +161,7 @@
             justify-content: space-between;
             padding: 0 20px;
             pointer-events: none;
-            z-index: 1002;
+            z-index: 2002; /* Mayor z-index para navegación */
         }
         
         .lightbox-btn {
@@ -202,7 +202,7 @@
             justify-content: center;
             align-items: center;
             transition: all 0.3s;
-            z-index: 1001;
+            z-index: 2001; /* Mayor z-index para cerrar */
             backdrop-filter: blur(5px);
         }
         
@@ -273,7 +273,7 @@
             color: white;
             font-size: 24px;
             cursor: pointer;
-            z-index: 99;
+            z-index: 1500; /* Menor que lightbox pero mayor que otros elementos */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
             overflow: hidden;
@@ -393,6 +393,7 @@
                 font-size: 1.5rem;
                 position: fixed;
                 bottom: 20px;
+                z-index: 2003; /* Prioridad máxima en móviles */
             }
             
             .lightbox-btn.prev {
@@ -415,13 +416,14 @@
                 padding: 10px 20px;
                 background: rgba(0, 0, 0, 0.5);
                 backdrop-filter: blur(5px);
+                z-index: 2002; /* Prioridad alta */
             }
             
             /* Ajustes para la burbuja de música */
             .music-bubble {
                 bottom: 20px;
                 left: 20px;
-                z-index: 1000; /* Mayor prioridad */
+                z-index: 1500; /* Menor que los controles del lightbox */
             }
             
             .music-bubble.expanded {
@@ -536,15 +538,12 @@
         // Configuración inicial de música
         music.volume = 0.5;
         
-        // Solución: Control de clics mejorado para móviles
+        // Control para expandir/contraer la burbuja en móvil
         musicBubble.addEventListener('click', function(e) {
-            // Solo procesamos clics en móviles
             if (window.innerWidth <= 768) {
-                // Prevenimos que el clic se propague a otros elementos
-                e.stopPropagation();
-                
-                // Alternamos el estado expandido
-                musicBubble.classList.toggle('expanded');
+                if (e.target === musicBubble || e.target === musicBubble.querySelector('.music-bubble-icon')) {
+                    musicBubble.classList.toggle('expanded');
+                }
             }
         });
         
@@ -727,6 +726,9 @@
             lightbox.style.display = 'flex';
             document.body.style.overflow = 'hidden';
             
+            // Bajar la burbuja de música temporalmente
+            musicBubble.style.zIndex = "100";
+            
             setTimeout(() => {
                 lightboxImg.src = imageCache.getFullsize(index).src;
             }, 100);
@@ -735,6 +737,9 @@
         function closeLightbox() {
             document.getElementById('lightbox').style.display = 'none';
             document.body.style.overflow = 'auto';
+            
+            // Restaurar z-index de la burbuja
+            musicBubble.style.zIndex = "1500";
         }
         
         function navigateLightbox(direction) {
