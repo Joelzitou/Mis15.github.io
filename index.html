@@ -109,7 +109,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.98);
-            z-index: 2000; /* Mayor z-index para el lightbox */
+            z-index: 2000;
             justify-content: center;
             align-items: center;
             animation: fadeIn 0.25s ease-out;
@@ -141,6 +141,32 @@
             animation: zoomIn 0.3s ease-out;
         }
         
+        .lightbox-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.2rem;
+            display: none;
+            text-align: center;
+        }
+        
+        .lightbox-loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -161,7 +187,7 @@
             justify-content: space-between;
             padding: 0 20px;
             pointer-events: none;
-            z-index: 2002; /* Mayor z-index para navegación */
+            z-index: 2002;
         }
         
         .lightbox-btn {
@@ -202,7 +228,7 @@
             justify-content: center;
             align-items: center;
             transition: all 0.3s;
-            z-index: 2001; /* Mayor z-index para cerrar */
+            z-index: 2001;
             backdrop-filter: blur(5px);
         }
         
@@ -273,7 +299,7 @@
             color: white;
             font-size: 24px;
             cursor: pointer;
-            z-index: 1500; /* Menor que lightbox pero mayor que otros elementos */
+            z-index: 1500;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
             overflow: hidden;
@@ -393,7 +419,7 @@
                 font-size: 1.5rem;
                 position: fixed;
                 bottom: 20px;
-                z-index: 2003; /* Prioridad máxima en móviles */
+                z-index: 2003;
             }
             
             .lightbox-btn.prev {
@@ -416,14 +442,14 @@
                 padding: 10px 20px;
                 background: rgba(0, 0, 0, 0.5);
                 backdrop-filter: blur(5px);
-                z-index: 2002; /* Prioridad alta */
+                z-index: 2002;
             }
             
             /* Ajustes para la burbuja de música */
             .music-bubble {
                 bottom: 20px;
                 left: 20px;
-                z-index: 1500; /* Menor que los controles del lightbox */
+                z-index: 1500;
             }
             
             .music-bubble.expanded {
@@ -471,6 +497,10 @@
         <span class="close">&times;</span>
         <div class="lightbox-content">
             <div class="lightbox-img-container">
+                <div class="lightbox-loading" id="lightbox-loading">
+                    <div class="lightbox-loading-spinner"></div>
+                    <div>Cargando imagen...</div>
+                </div>
                 <img class="lightbox-img" id="lightbox-img" src="" alt="">
             </div>
             <div class="lightbox-nav">
@@ -534,6 +564,7 @@
         const musicBubble = document.getElementById('music-bubble');
         const playIcon = document.getElementById('play-icon');
         const pauseIcon = document.getElementById('pause-icon');
+        const lightboxLoading = document.getElementById('lightbox-loading');
         
         // Configuración inicial de música
         music.volume = 0.5;
@@ -561,7 +592,7 @@
         
         // Control de reproducción/pausa
         playPauseBtn.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevenimos que el clic propague a la burbuja
+            e.stopPropagation();
             
             if (music.paused) {
                 music.play();
@@ -624,6 +655,16 @@
                     this.fullsize.set(index, img);
                 }
                 return this.fullsize.get(index);
+            },
+            
+            preloadAdjacentImages(index) {
+                // Precargar imágenes adyacentes para navegación fluida
+                if (index > 0) {
+                    this.getFullsize(index - 1);
+                }
+                if (index < totalPhotos - 1) {
+                    this.getFullsize(index + 1);
+                }
             }
         };
         
@@ -675,6 +716,7 @@
                 observer.observe(item);
             }
             
+            // Precargar imágenes de la siguiente página
             if (page < totalPages) {
                 const nextStart = page * photosPerPage;
                 const nextEnd = Math.min(nextStart + photosPerPage, totalPhotos);
@@ -724,16 +766,27 @@
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightbox-img');
             
-            lightboxImg.src = imageCache.getThumbnail(index).src;
             lightbox.style.display = 'flex';
             document.body.style.overflow = 'hidden';
             
             // Contraer la burbuja de música si está expandida
             musicBubble.classList.remove('expanded');
             
-            setTimeout(() => {
-                lightboxImg.src = imageCache.getFullsize(index).src;
-            }, 100);
+            // Precargar imágenes adyacentes para navegación fluida
+            imageCache.preloadAdjacentImages(index);
+            
+            // Mostrar indicador de carga
+            lightboxLoading.style.display = 'block';
+            lightboxImg.style.display = 'none';
+            
+            // Cargar la imagen en tamaño completo
+            const img = new Image();
+            img.onload = function() {
+                lightboxImg.src = this.src;
+                lightboxImg.style.display = 'block';
+                lightboxLoading.style.display = 'none';
+            };
+            img.src = getImageUrls(index).fullsize;
         }
         
         function closeLightbox() {
@@ -743,28 +796,46 @@
         
         function navigateLightbox(direction) {
             let newPage = currentPage;
+            let newIndex = currentLightboxIndex;
             
             if (direction === 'prev' && currentLightboxIndex > 0) {
-                currentLightboxIndex--;
-                newPage = Math.floor(currentLightboxIndex / photosPerPage) + 1;
+                newIndex = currentLightboxIndex - 1;
+                newPage = Math.floor(newIndex / photosPerPage) + 1;
             } else if (direction === 'next' && currentLightboxIndex < totalPhotos - 1) {
-                currentLightboxIndex++;
-                newPage = Math.floor(currentLightboxIndex / photosPerPage) + 1;
+                newIndex = currentLightboxIndex + 1;
+                newPage = Math.floor(newIndex / photosPerPage) + 1;
+            } else {
+                return; // No hay más imágenes en esa dirección
             }
-
+            
+            // Actualizar la página si es necesario
             if (newPage !== currentPage) {
                 currentPage = newPage;
                 generateGallery(currentPage);
                 generatePagination();
-                window.scrollTo({top: 0, behavior: 'smooth'});
             }
-
-            const lightboxImg = document.getElementById('lightbox-img');
-            lightboxImg.src = imageCache.getThumbnail(currentLightboxIndex).src;
             
-            setTimeout(() => {
-                lightboxImg.src = imageCache.getFullsize(currentLightboxIndex).src;
-            }, 50);
+            // Actualizar el índice actual
+            currentLightboxIndex = newIndex;
+            
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightbox = document.getElementById('lightbox');
+            
+            // Mostrar indicador de carga
+            lightboxLoading.style.display = 'block';
+            lightboxImg.style.display = 'none';
+            
+            // Precargar imágenes adyacentes para navegación fluida
+            imageCache.preloadAdjacentImages(newIndex);
+            
+            // Cargar la nueva imagen
+            const img = new Image();
+            img.onload = function() {
+                lightboxImg.src = this.src;
+                lightboxImg.style.display = 'block';
+                lightboxLoading.style.display = 'none';
+            };
+            img.src = getImageUrls(newIndex).fullsize;
         }
         
         document.getElementById('prev').addEventListener('click', () => navigateLightbox('prev'));
@@ -782,6 +853,11 @@
         window.addEventListener('DOMContentLoaded', () => {
             generateGallery(currentPage);
             generatePagination();
+            
+            // Precargar las primeras imágenes para una mejor experiencia
+            for (let i = 0; i < Math.min(photosPerPage, totalPhotos); i++) {
+                imageCache.getThumbnail(i);
+            }
         });
     </script>
 </body>
